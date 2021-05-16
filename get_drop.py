@@ -83,7 +83,7 @@ class Drop:
         free_domains = []
         for domain in domains:
             i = 1
-            correct_domain = re.sub(r'([a-z0-9\.]+)\.(\w+)\.(\w+)', r'\2.\3', domain)
+            correct_domain = re.sub(r'([a-z0-9\-\.]+)\.([a-z0-9\-]+)\.(\w+)', r'\2.\3', domain)
             while True:
                 try:
                     response = requests.get('https://www.nic.ru/whois/?searchWord='+correct_domain, timeout=60)
@@ -93,7 +93,7 @@ class Drop:
                     sleep(2**i)
                     pass
 
-            if re.search(correct_domain + ' занят', response.text):
+            if re.search(correct_domain + r'[\(a-z0-9\.\-\)]* занят', response.text):
                 with open('fail.log', 'a') as fail_data:
                     string_to_write = domain + ' - ' + dt.now().strftime("%Y-%m-%d-%H:%M:%S")+'\n'
                     fail_data.write(string_to_write)
