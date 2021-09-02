@@ -8,6 +8,7 @@ import os
 from datetime import datetime as dt
 from datetime import timedelta
 import re
+from bs4 import BeautifulSoup as BS
 
 
 class Drop:
@@ -93,7 +94,11 @@ class Drop:
                     sleep(2**i)
                     pass
 
-            if re.search(correct_domain + r'[\(a-z0-9\.\-\)]* занят', response.text):
+            content = BS(response.text, 'html.parser')
+
+            status_content = content.find_all('div', class_='_1_uOq')
+
+            if re.search(correct_domain + r'[\(a-z0-9\.\-\)]* занят', str(status_content)):
                 with open('fail.log', 'a') as fail_data:
                     string_to_write = domain + ' - ' + dt.now().strftime("%Y-%m-%d-%H:%M:%S")+'\n'
                     fail_data.write(string_to_write)
